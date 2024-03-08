@@ -3,6 +3,7 @@ Purpose: Retrieve common data from Yahoo Finance
 """
 
 import pandas as pd
+import numpy as np
 import yfinance as yf
 import datetime as dt
 
@@ -17,5 +18,24 @@ def get_candles(
     """
     
     df = yf.download(tickers=tickers, start=start_date, end=end_date, interval=freq)
+    # TODO: Error handling
 
     return df
+
+
+def get_returns_from_candles(
+    df_candles : pd.DataFrame,
+    candle_info_to_use : str = "Adj Close"
+) -> pd.DataFrame:
+    """
+    Calcualate the log returns from the candles provided.
+
+    Args
+    ----
+    df_candles : candles dataframe
+    candle_info_to_use : specifying which candle information to use to get returns.
+    """
+    
+    return np.log( df_candles[candle_info_to_use] / df_candles[candle_info_to_use].shift(1) )
+
+
